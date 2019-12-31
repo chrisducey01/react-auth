@@ -1,19 +1,14 @@
 const express = require('express')
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const dbConnection = require('./database');
 const routes = require('./routes');
 const session = require('express-session');
-const mongoose = require('mongoose');
 const passport = require('./passport');
+const MongoStore = require('connect-mongo')(session)
 
 const app = express()
 const PORT = process.env.PORT || 8080
-
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/react-auth",
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    });
 
 // ===== Middleware ====
 app.use(morgan('dev'))
@@ -25,6 +20,7 @@ app.use(
 app.use(bodyParser.json());
 app.use(session({
 	secret: 'El-Castigador',
+	store: new MongoStore({ mongooseConnection: dbConnection }),
 	resave: false, 
 	saveUninitialized: false
 })

@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const routes = require('./routes');
 const session = require('express-session');
 const mongoose = require('mongoose');
+const passport = require('./passport');
 
 const app = express()
 const PORT = process.env.PORT || 8080
@@ -22,13 +23,18 @@ app.use(
 	})
 )
 app.use(bodyParser.json());
-app.use(routes);
 app.use(session({
 	secret: 'El-Castigador',
 	resave: false, 
 	saveUninitialized: false
 })
 );
+
+// Passport config for authentication
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.use(routes);
 
 app.listen(PORT, () => {
 	console.log(`App listening on PORT: ${PORT}`)

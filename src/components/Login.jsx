@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import {Redirect} from 'react-router-dom';
+
 import axios from 'axios';
 
-class Signup extends Component {
+class Login extends Component {
     constructor(props){
         super(props);
         this.state={
@@ -27,50 +28,55 @@ class Signup extends Component {
         console.log(`Username: ${this.state.username}`)
         console.log(`Password: ${this.state.password}`)
 
-        axios.post('/api/user/signup',{
+        axios.post('/api/user/login',{
             username: this.state.username,
             password: this.state.password
         })
         .then(response=>{
-            console.log(response)
-            if(response.data){
-                console.log('Successful Signup')
+            console.log('Login response: ');
+            console.log(response);
+            if(response.status === 200){
+                console.log('Successful Login')
+                this.props.updateUser({
+                    loggedIn: true,
+                    username: response.data.username
+                })
                 this.setState({
-                    redirectTo: '/login'
+                    redirectTo: '/'
                 })
             }
             else{
-                console.log('Signup error')
+                console.log('Login error')
             }
         })
         .catch(err=>{
-            console.log("Error during signup post to server")
+            console.log("Error during login post to server")
             console.log(err)
         })
     }
 
-    render() {
+    render(){
         return (
             <div>
-                <h1>Signup</h1>
+                <h1>Login</h1>
                 <form>
                     <div className="form-group">
                         <label htmlFor="username">Username</label>
-                        <input type="text" 
-                            className="form-control" 
+                        <input type="text"
+                            className="form-control"
                             id="username"
                             name="username"
-                            value={this.state.username} 
+                            value={this.state.username}
                             onChange={this.handleChange}
                         />
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input type="password" 
+                        <input type="password"
                             className="form-control"
                             id="password"
                             name="password"
-                            value={this.state.password} 
+                            value={this.state.password}
                             onChange={this.handleChange}
                         />
                     </div>
@@ -79,8 +85,8 @@ class Signup extends Component {
                 </form>
                 {(this.state.redirectTo !== "") ? <Redirect to={this.state.redirectTo}/> : null}
             </div>
-        )
+        )    
     }
 }
 
-export default Signup;
+export default Login;
